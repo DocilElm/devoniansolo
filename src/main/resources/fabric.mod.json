@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "devoniansolo",
+	"version": "${version}",
+	"name": "devoniansolo",
+	"description": "devonian ft. solo clear",
+	"authors": ["DocilElm"],
+	"contact": {
+		"homepage": "https://github.com/Synnerz/",
+		"sources": "https://github.com/Synnerz/"
+	},
+	"license": "ARR",
+	"icon": "assets/devoniansolo/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			{
+				"value": "com.github.docilelm.devoniansolo.DevonianSolo",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+      "devoniansolo.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*",
+		"devonian": ">=1.21.9-1.21.11"
+	}
+}
