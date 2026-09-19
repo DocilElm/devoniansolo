@@ -1,5 +1,6 @@
 package com.github.docilelm.devoniansolo.mixin;
 
+import com.github.docilelm.devoniansolo.features.FiftyPingDB;
 import com.github.synnerz.devonian.Devonian;
 import com.github.docilelm.devoniansolo.features.NoRotate;
 import com.github.docilelm.devoniansolo.mixin.accessor.LocalPlayerAccessor;
@@ -9,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PositionMoveRotation;
@@ -120,5 +122,10 @@ public abstract class ClientPacketListenerMixin {
         pl.setLastYawClient(lastRotation.yRot());
         wasChanged = false;
         lastRotation = null;
+    }
+
+    @Inject(method = "handleSetHeldSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;setSelectedSlot(I)V"))
+    private void devonianSolo$onHeldItemSlot(ClientboundSetHeldSlotPacket packet, CallbackInfo ci) {
+        FiftyPingDB.INSTANCE.onHeldSlotChange(packet.slot());
     }
 }

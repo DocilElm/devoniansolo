@@ -6,8 +6,11 @@ import com.github.synnerz.devonian.api.Scheduler
 import com.github.synnerz.devonian.api.dungeon.Dungeons
 import com.github.synnerz.devonian.config.Categories
 import com.github.synnerz.devonian.features.Feature
+import kotlinx.atomicfu.atomic
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
@@ -40,14 +43,15 @@ object FiftyPingDB : Feature(
         Blocks.LEVER,
         Blocks.PLAYER_HEAD,
     )
+    private var lastItemStack = atomic(ItemStack.EMPTY)
 
-    fun onBreak(blockPos: BlockPos, blockState: BlockState, block: Block) {
-        if (block in blacklist) return
-        if (!isEnabled() || Location.area != "catacombs" || Dungeons.inBoss.value) return
-        val itemStack = minecraft.player?.mainHandItem ?: return
-        if (ItemUtils.skyblockId(itemStack) != "DUNGEONBREAKER") return
+    fun onBreak(blockPos: BlockPos, blockState: BlockState, block: Block): Boolean {
+        if (block in blacklist) return false
+        if (!isEnabled() || Location.area != "catacombs" || Dungeons.inBoss.value) return false
+        if (lastItemStack.value.item == Items.DIAMOND_PICKAXE && ItemUtils.skyblockId(lastItemStack.value) != "DUNGEONBREAKER") return true
+        else if (ItemUtils.skyblockId(lastItemStack.value) != "DUNGEONBREAKER") return false
         val shouldRespawn = block in respawnList && SETTING_FIFTY_PING_CHESTS.get()
-        val world = minecraft.level ?: return
+        val world = minecraft.level ?: return false
         val soundType = blockState.soundType
 
         Scheduler.scheduleTask {
@@ -66,5 +70,11 @@ object FiftyPingDB : Feature(
                 world.setBlock(blockPos, blockState, 3)
             }
         }
+
+        return false
+    }
+
+    fun onHeldSlotChange(slot: Int) {
+        lastItemStack.value = minecraft.player?.inventory?.getItem(slot) ?: return
     }
 }
