@@ -2,6 +2,7 @@ package com.github.docilelm.devoniansolo
 
 import com.github.synnerz.devonian.Devonian
 import com.github.docilelm.devoniansolo.features.FiftyPingDB
+import com.github.docilelm.devoniansolo.features.FiftyPingSecrets
 import com.github.docilelm.devoniansolo.features.NoRotate
 import net.fabricmc.api.ClientModInitializer
 import org.slf4j.LoggerFactory
@@ -24,5 +25,6 @@ object DevonianSolo : ClientModInitializer {
 	fun preInit() {
 		Devonian.addFeatureInstance(NoRotate)
 		Devonian.addFeatureInstance(FiftyPingDB)
+		Devonian.addFeatureInstance(FiftyPingSecrets)
 	}
 }
